@@ -2,20 +2,20 @@ version: '3.8'
 
 services:
   db:
-    build:
-      context: ./db
-      dockerfile: Dockerfile
-    container_name: mariadb
+    image: my_mariadb_image:latest
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - backend
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
   flask:
-    build: ./flask
-    container_name: flask-app
+    image: my_flask_image:latest
     environment:
       - FLASK_ENV=development
       - DATABASE_HOST=db
@@ -30,16 +30,29 @@ services:
     networks:
       - backend
     command: gunicorn --bind 0.0.0.0:5000 -w 4 --timeout 90 wsgi:app
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
 
   nginx:
-    build: ./nginx
-    container_name: nginx
+    image: my_nginx_image:latest
+    environment:
+      - FLASK_APP_URL=http://flask:5000
     ports:
       - "80:80"
     depends_on:
       - flask
     networks:
       - backend
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
 
 networks:
   backend:
