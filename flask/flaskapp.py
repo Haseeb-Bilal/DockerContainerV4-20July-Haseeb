@@ -1,12 +1,16 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_migrate import Migrate
 from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Initialize extensions
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+migrate = Migrate(app, db)  # Initialize Flask-Migrate with app and db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -18,10 +22,6 @@ class BlogPost(db.Model):
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-#@app.before_first_request
-#def create_tables():
-   # db.create_all()
 
 @app.route('/')
 def home():

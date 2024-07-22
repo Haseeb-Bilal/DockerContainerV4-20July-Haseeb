@@ -20,8 +20,8 @@ services:
       - FLASK_ENV=development
       - DATABASE_HOST=db
       - DATABASE_PORT=3306
-      - DATABASE_USER=flaskuser
-      - DATABASE_PASSWORD=flaskpassword
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=rootpassword
       - DATABASE_DB=flaskdb
     ports:
       - "5000:5000"

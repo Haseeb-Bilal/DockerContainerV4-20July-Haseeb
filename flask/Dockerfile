@@ -8,6 +8,7 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 
 # Install dependencies
+RUN pip install Flask-Migrate
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Flask app
